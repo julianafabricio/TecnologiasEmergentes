@@ -1,5 +1,5 @@
 # TecnologiasEmergentes
-Projeto desenvolvido nas aulas de Tecnologias Emergentes 
+
 🛍️ EcommerceBemBarato
 EcommerceBemBarato é uma aplicação web desenvolvida com o framework Flask que simula uma plataforma de anúncios e vendas de produtos variados. Usuários podem se cadastrar, fazer login, criar anúncios de produtos, editar, remover, e visualizar categorias específicas como Eletrônicos, Casa e Decoração, Cama e Banho, entre outros.
 
