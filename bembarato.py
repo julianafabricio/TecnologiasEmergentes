@@ -93,34 +93,16 @@ class Favorito (db.Model):
 class Pergunta (db.Model):
     __tablename__ = "pergunta"
     id_pergunta= db.Column('id_pergunta', db.Integer, primary_key=True)
-    texto_pergunta = db.Column('texto_pergunta', db.String(45))
+    texto_pergunta = db.Column('texto_pergunta', db.String(8000))
     data_pergunta = db.Column ('data_pergunta', db.String (45))
+    resposta_pergunta= db.Column ('resposta_pergunta', db. String(8000))
+    data_resposta = db.Column ('data_resposta', db.String (45))
 
-    def __init__(self, texto_pergunta, data_pergunta):
+    def __init__(self, texto_pergunta, data_pergunta, resposta_pergunta, data_resposta):
         self.texto_pergunta = texto_pergunta
         self.data_pergunta = data_pergunta
-
-class Envio (db.Model):
-    __tablename__ = "envio"
-    id_envio= db.Column('id_envio', db.Integer, primary_key=True)
-    data_envio= db.Column('data_envio', db.String(45))
-    status_envio= db.Column('status_envio', db.String(45))
-
-    def __init__(self, data_envio, status_envio):
-        self.data_envio = data_envio
-        status_envio = status_envio
-
-class Compra (db.Model):
-    __tablename__ = "compra"
-    id_compra= db.Column('id_compra', db.Integer, primary_key=True)
-    valor_compra= db.Column('valor_compra', db.String(45))
-    data_compra=db.Column ('data_compra', db.String(45))
-    quantidade= db.Column('quantidade', db.String(45))
-
-    def __init__(self, valor_compra, data_compra, quantidade):
-        self.valor_compra = valor_compra
-        self.data_compra = data_compra
-        self.quantidade = quantidade
+        self.resposta_pergunta= resposta_pergunta
+        self.data_resposta = data_resposta
 
 @app.errorhandler(404)
 def paginanaoencontrada(error):
@@ -270,9 +252,30 @@ def deletaranuncio (id_anuncio):
     db.session.commit()
     return redirect(url_for('anuncio'))
     
-@app.route("/produtos/perguntas")
+
+@app.route('/perguntas')
 def perguntas():
-    return render_template ('perguntas.html')
+    perguntas = Pergunta.query.all()
+    return render_template('perguntas.html', perguntas=perguntas)
+
+@app.route("/novapergunta", methods=['POST'])
+def novapergunta():
+    pergunta = Pergunta (request.form.get ('texto_pergunta'), request.form.get ('data_pergunta'),"","")
+    db.session.add(pergunta)
+    db.session.commit()
+    return redirect(url_for('perguntas'))
+
+@app.route("/pergunta/responder/<int:id_pergunta>", methods=['GET', 'POST'])
+def responder(id_pergunta):
+    pergunta= Pergunta.query.get(id_pergunta)
+    if request.method == 'POST':
+        pergunta.data_resposta = request.form.get ('data_resposta')
+        pergunta.resposta_pergunta = request.form.get ('resposta_pergunta')
+        db.session.add(pergunta)
+        db.session.commit()
+        return redirect(url_for('perguntas'))
+
+    return render_template('responder.html', pergunta = pergunta)
 
 @app.route("/relatorios/compras")
 def relcompras():
